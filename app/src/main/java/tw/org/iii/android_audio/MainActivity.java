@@ -6,8 +6,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.MediaRecorder;
@@ -18,6 +20,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.SeekBar;
 
 import java.io.File;
 
@@ -27,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     int h1,h2;
     private File musicDir, sdroot;
     private MediaRecorder mediaRecorder;
+    private MyReceiver receiver;
+    private SeekBar seekBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,11 +60,46 @@ public class MainActivity extends AppCompatActivity {
         //儲存路徑
         musicDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
         sdroot = Environment.getExternalStorageDirectory();
-
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 5);
         h1 = soundPool.load(this, R.raw.h1, 1);
         h2 = soundPool.load(this, R.raw.h2, 1);
+        seekBar = findViewById(R.id.seekBar);
+        receiver = new MyReceiver();
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    Intent intent = new Intent(MainActivity.this, MyService.class);
+                    intent.putExtra("cmd", "seekto");
+                    intent.putExtra("nowpos", "seekto");
+                    startService(intent);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        registerReceiver(receiver, new IntentFilter("PLAY_NOW"));
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(receiver);
     }
 
     public void playSystemSound(View view) {
@@ -125,5 +165,20 @@ public class MainActivity extends AppCompatActivity {
     public void resetMusic(View view) {
         Intent intent = new Intent(this, MyService.class);
         stopService(intent);
+    }
+
+    //廣播接收器
+    private class MyReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int pos = intent.getIntExtra("now", -1);
+            int len = intent.getIntExtra("len", -1);
+            if (len>=0) {
+                seekBar.setMax(len);
+            }
+            else if (pos >= 0) {
+                seekBar.setProgress(pos);
+            }
+        }
     }
 }

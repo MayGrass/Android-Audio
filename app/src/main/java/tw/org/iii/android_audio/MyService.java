@@ -9,10 +9,13 @@ import android.os.IBinder;
 import android.util.Log;
 
 import java.io.File;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MyService extends Service {
     private File sdroot;
     private MediaPlayer mediaPlayer;
+    private Timer timer;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -21,12 +24,25 @@ public class MyService extends Service {
         return null;
     }
 
+    //獲得時間進度值
+    private class MyTask extends TimerTask {
+        @Override
+        public void run() {
+            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                int pos = mediaPlayer.getCurrentPosition();
+                sendBroadcast(new Intent("PLAY_NOW").putExtra("now", pos));
+            }
+        }
+    }
+
     //第一次按才執行，第二次後都是onStart
     @Override
     public void onCreate() {
         super.onCreate();
         Log.v("DCH", "OnCreate");
 
+        timer = new Timer();
+        timer.schedule(new MyTask(), 0, 100);
         try {
             sdroot = Environment.getExternalStorageDirectory();
             mediaPlayer = new MediaPlayer();
@@ -50,6 +66,10 @@ public class MyService extends Service {
         else if (!mediaPlayer.isPlaying() && cmd.equals("play")) {
             mediaPlayer.start();
         }
+        else if (cmd.equals("seekto")) {
+            int nowpos = intent.getIntExtra("nowpos", -1);
+            if (nowpos >= 0) mediaPlayer.seekTo(nowpos);
+        }
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -60,6 +80,11 @@ public class MyService extends Service {
             if (mediaPlayer.isPlaying()) mediaPlayer.stop();
             mediaPlayer.release();
         }
-        Log.v("DCH", "onDestroy");
+        if (timer != null) {
+            timer.cancel();
+            timer.purge();
+            timer = null;
+        }
+        //Log.v("DCH", "onDestroy");
     }
 }
