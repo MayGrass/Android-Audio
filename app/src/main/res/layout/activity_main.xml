@@ -11,8 +11,20 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="playSound"
-        android:onClick="playSound"
+        android:text="SytemSound"
+        android:onClick="playSystemSound"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="PlaySound1"
+        android:onClick="PlaySound1"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="PlaySound2"
+        android:onClick="PlaySound2"
         />
 
 </LinearLayout>
