@@ -44,10 +44,10 @@ public class MyService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         //Log.v("DCH", "onStartCommand");
         String cmd = intent.getStringExtra("cmd");
-        if (cmd.equals("pause")) {
+        if (mediaPlayer.isPlaying() && cmd.equals("pause")) {
             mediaPlayer.pause();
         }
-        else if (cmd.equals("play")) {
+        else if (!mediaPlayer.isPlaying() && cmd.equals("play")) {
             mediaPlayer.start();
         }
         return super.onStartCommand(intent, flags, startId);
@@ -56,6 +56,10 @@ public class MyService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (mediaPlayer != null) {
+            if (mediaPlayer.isPlaying()) mediaPlayer.stop();
+            mediaPlayer.release();
+        }
         Log.v("DCH", "onDestroy");
     }
 }

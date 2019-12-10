@@ -118,7 +118,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void stopMusic(View view) {
         Intent intent = new Intent(this, MyService.class);
-        intent.putExtra("cmd", "stop");
+        intent.putExtra("cmd", "pause");
         startService(intent);
+    }
+
+    public void resetMusic(View view) {
+        Intent intent = new Intent(this, MyService.class);
+        stopService(intent);
     }
 }
