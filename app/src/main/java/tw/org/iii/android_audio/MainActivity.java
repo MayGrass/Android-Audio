@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
             mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
             //解碼方式
             mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+            //輸出路徑
             mediaRecorder.setOutputFile(new File(sdroot, "DCH.3gp").getAbsolutePath());
 
             mediaRecorder.prepare();
@@ -109,4 +110,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public void playMusic(View view) {
+        Intent intent = new Intent(this, MyService.class);
+        intent.putExtra("cmd", "play");
+        startService(intent);
+    }
+
+    public void stopMusic(View view) {
+        Intent intent = new Intent(this, MyService.class);
+        intent.putExtra("cmd", "stop");
+        startService(intent);
+    }
 }

@@ -39,4 +39,20 @@
         android:onClick="StopRecord"
         />
 
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="playMusic"
+        android:onClick="playMusic"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="stopMusic"
+        android:onClick="stopMusic"
+        />
+
 </LinearLayout>
