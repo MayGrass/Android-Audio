@@ -26,5 +26,17 @@
         android:text="PlaySound2"
         android:onClick="PlaySound2"
         />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="StartRecord"
+        android:onClick="StartRecord"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="StopRecord"
+        android:onClick="StopRecord"
+        />
 
 </LinearLayout>
